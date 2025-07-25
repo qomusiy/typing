@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>O'zbekcha Terish Testi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #1a1b26;
+      color: #c0caf5;
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .quote {
+      font-size: 2rem;
+      line-height: 2.8rem;
+      word-wrap: break-word;
+      user-select: none;
+      margin: 20px 0;
+      text-align: left;
+      width: 100%;
+    }
+
+    .quote span.correct {
+      color: #9ece6a;
+    }
+
+    .quote span.incorrect {
+      color: #f7768e;
+    }
+
+    .quote span.active {
+      border-bottom: 2px solid #7dcfff;
+    }
+
+    #stats {
+      margin: 20px 0;
+      font-size: 1.1rem;
+      color: #d900ff;
+      transition: opacity 0.3s ease;
+    }
+
+    #restartLink {
+      display: inline-block;
+      margin: 20px 0;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #2a2e45;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      user-select: none;
+    }
+
+    #restartLink:hover {
+      background-color: #3b3f5c;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .length-btn, .sound-toggle {
+      padding: 8px 16px;
+      font-size: 1rem;
+      background-color: #2a2e45;
+      color: #c0caf5;
+      border: 1px solid #2a2e45;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .length-btn:hover, .sound-toggle:hover {
+      background-color: #3b3f5c;
+      /* border-color: #7dcfff; */
+    }
+
+    .length-btn.active, .sound-toggle.active {
+      background-color: #7aa2f7;
+      color: #1a1b26;
+      border-color: #7aa2f7;
+    }
+
+    .sound-toggle i {
+      margin-right: 5px;
+    }
+
+    h1 {
+      transition: opacity 0.3s ease;
+      margin: 10px 0;
+    }
+
+    .fade {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1> - O'zbekcha Tayping Qil Akasi😎..</h1>
+    
+    <div class="controls">
+      <a href="#" class="length-btn" data-length="short">Qisqa</a>
+      <a href="#" class="length-btn active" data-length="medium">O'rta</a>
+      <a href="#" class="length-btn" data-length="long">Uzun</a>
+      <a href="#" class="sound-toggle active" id="soundToggle"><i class="fas fa-volume-up"></i></a>
+    </div>
+
+    <div class="quote" id="quote"></div>
+
+    <div id="stats"></div>
+
+    <div id="restartLink">Qayta boshlash🔄</div>
+
+    <!-- Audio pool for correct sounds (used for correct keypress and backspace) -->
+    <audio id="correctSound1" src="c.wav" preload="auto"></audio>
+    <audio id="correctSound2" src="c.wav" preload="auto"></audio>
+    <audio id="correctSound3" src="c.wav" preload="auto"></audio>
+    <!-- Audio pool for incorrect sounds -->
+    <audio id="incorrectSound1" src="i.wav" preload="auto"></audio>
+    <audio id="incorrectSound2" src="i.wav" preload="auto"></audio>
+    <audio id="incorrectSound3" src="i.wav" preload="auto"></audio>
+    <!-- Single audio for test completion -->
+    <audio id="testCompleteSound" src="s.wav" preload="auto"></audio>
+  </div>
+
+  <script>
+    const quoteEl = document.getElementById('quote');
+    const statsEl = document.getElementById('stats');
+    const restartLink = document.getElementById('restartLink');
+    const lengthButtons = document.querySelectorAll('.length-btn');
+    const soundToggle = document.getElementById('soundToggle');
+    const titleEl = document.querySelector('h1');
+    const controlsEl = document.querySelector('.controls');
+
+    // Audio pools
+    const correctSounds = [
+      document.getElementById('correctSound1'),
+      document.getElementById('correctSound2'),
+      document.getElementById('correctSound3')
+    ];
+    const incorrectSounds = [
+      document.getElementById('incorrectSound1'),
+      document.getElementById('incorrectSound2'),
+      document.getElementById('incorrectSound3')
+    ];
+    const testCompleteSound = document.getElementById('testCompleteSound');
+    let correctSoundIndex = 0;
+    let incorrectSoundIndex = 0;
+
+    const quotes = {
+      short: [
+        "Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.",
+        "Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.",
+        "Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.",
+        "Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.",
+        "Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.",
+        "Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.",
+        "Rim bir kunda qurilmagan.",
+        'Bilim Makkaga yetib borgan, lekin amal qilish "astanovka"da ham emas.',
+        "Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.",
+        "Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.",
+        "Ikkita kitob o'qigandan bitta kitobni ikki marta o'qigan afzal."
+      ],
+      medium: [
+        "Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.",
+        "Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.",
+        'Kimdir "qila olaman", kimdir "qila olmayman" deydi. Odatda ularning ikkisi ham haq.',
+        "Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.",
+        "Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.",
+        "Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.",
+        "Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!",
+        "O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.",
+        "Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.",
+        "Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.",
+        "Chalg'imay ishlang, kitob o'qing, o'ylang, yuring, yozing - g'alaba aniq, sabr qila olsangiz bas."
+      ],
+      long: [
+        "Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.",
+        "Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar",
+        "Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.",
+        "Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.",
+        "Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.",
+        "Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."
+      ]
+    };
+
+    let currentQuote = "";
+    let charSpans = [];
+    let currentIndex = 0;
+    let startTime = null;
+    let ended = false;
+    let currentLength = "medium";
+    let soundEnabled = localStorage.getItem('soundEnabled') !== 'true';
+
+    function updateSoundToggle() {
+      soundToggle.classList.toggle('active', soundEnabled);
+      soundToggle.innerHTML = `<i class="fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'}"></i>`;
+    }
+
+    updateSoundToggle();
+
+    soundToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      soundEnabled = !soundEnabled;
+      localStorage.setItem('soundEnabled', soundEnabled);
+      updateSoundToggle();
+      console.log(`Sound toggled: ${soundEnabled ? 'On' : 'Off'}`);
+    });
+
+    function getRandomQuote(length) {
+      const list = quotes[length];
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function renderQuote() {
+      quoteEl.innerHTML = '';
+      currentQuote.split('').forEach((char, i) => {
+        const span = document.createElement('span');
+        span.innerText = char;
+        if (i === 0) span.classList.add('active');
+        quoteEl.appendChild(span);
+      });
+      charSpans = quoteEl.querySelectorAll('span');
+      currentIndex = 0;
+      ended = false;
+      statsEl.innerText = "";
+      titleEl.classList.remove('fade');
+      controlsEl.classList.remove('fade');
+      statsEl.classList.remove('fade');
+      restartLink.classList.remove('fade');
+      correctSounds.forEach(sound => { sound.pause(); sound.currentTime = 0; });
+      incorrectSounds.forEach(sound => { sound.pause(); sound.currentTime = 0; });
+      testCompleteSound.pause();
+      testCompleteSound.currentTime = 0;
+      correctSoundIndex = 0;
+      incorrectSoundIndex = 0;
+      console.log('Quote rendered, sounds reset');
+    }
+
+    function startTest(length) {
+      currentLength = length || currentLength;
+      currentQuote = getRandomQuote(currentLength);
+      renderQuote();
+      startTime = null;
+      lengthButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.length === currentLength));
+    }
+
+    function endTest() {
+      ended = true;
+      if (startTime) {
+        const elapsed = (new Date() - startTime) / 1000;
+        const words = currentQuote.split(' ').length;
+        const wpm = Math.round((words / elapsed) * 60);
+        const correct = [...charSpans].filter(span => span.classList.contains('correct')).length;
+        const accuracy = Math.round((correct / currentQuote.length) * 100);
+        statsEl.innerText = `Tezlik: ${wpm}ta so'z bir daqiqada | To'g'rilik: ${accuracy}%`;
+        titleEl.classList.remove('fade');
+        controlsEl.classList.remove('fade');
+        statsEl.classList.remove('fade');
+        restartLink.classList.remove('fade');
+        if (soundEnabled) {
+          console.log('Playing test complete sound');
+          testCompleteSound.play().catch(err => console.error('Test complete sound error:', err));
+        }
+      }
+    }
+
+    function enterFocusMode() {
+      titleEl.classList.add('fade');
+      controlsEl.classList.add('fade');
+      statsEl.classList.add('fade');
+      restartLink.classList.add('fade');
+    }
+
+    function exitFocusMode() {
+      titleEl.classList.remove('fade');
+      controlsEl.classList.remove('fade');
+      statsEl.classList.remove('fade');
+      restartLink.classList.remove('fade');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (ended || !currentQuote) return;
+
+      if (
+        e.ctrlKey || e.altKey || e.metaKey ||
+        e.key === "CapsLock" ||
+        e.key === "Shift" ||
+        e.key === "Tab" ||
+        e.key === "Escape" ||
+        e.key.length > 1 && e.key !== "Backspace"
+      ) return;
+
+      if (!startTime) {
+        startTime = new Date();
+      }
+
+      enterFocusMode();
+
+      const expectedChar = currentQuote[currentIndex];
+      const key = e.key;
+
+      if (key.length === 1) {
+        const span = charSpans[currentIndex];
+
+        if (key === expectedChar) {
+          span.classList.add('correct');
+          if (soundEnabled) {
+            console.log('Playing correct sound');
+            const sound = correctSounds[correctSoundIndex];
+            sound.currentTime = 0;
+            sound.play().catch(err => console.error('Correct sound error:', err));
+            correctSoundIndex = (correctSoundIndex + 1) % correctSounds.length;
+          }
+        } else {
+          span.classList.add('incorrect');
+          if (soundEnabled) {
+            console.log('Playing incorrect sound');
+            const sound = incorrectSounds[incorrectSoundIndex];
+            sound.currentTime = 0;
+            sound.play().catch(err => console.error('Incorrect sound error:', err));
+            incorrectSoundIndex = (incorrectSoundIndex + 1) % incorrectSounds.length;
+          }
+        }
+
+        span.classList.remove('active');
+        currentIndex++;
+
+        if (currentIndex < charSpans.length) {
+          charSpans[currentIndex].classList.add('active');
+        } else {
+          endTest();
+        }
+      } else if (key === 'Backspace' && currentIndex > 0) {
+        if (soundEnabled) {
+          console.log('Playing backspace sound (correct.wav)');
+          const sound = correctSounds[correctSoundIndex];
+          sound.currentTime = 0;
+          sound.play().catch(err => console.error('Backspace sound error:', err));
+          correctSoundIndex = (correctSoundIndex + 1) % correctSounds.length;
+        }
+        charSpans[currentIndex].classList.remove('active');
+        currentIndex--;
+        const span = charSpans[currentIndex];
+        span.classList.remove('correct', 'incorrect');
+        span.classList.add('active');
+      }
+    });
+
+    document.addEventListener('mousemove', () => {
+      if (!ended && startTime) {
+        exitFocusMode();
+      }
+    });
+
+    restartLink.addEventListener('click', () => {
+      startTest();
+    });
+
+    lengthButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        startTest(button.dataset.length);
+      });
+    });
+
+    startTest();
+  </script>
+</body>
+</html>
