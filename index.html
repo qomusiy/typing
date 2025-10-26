@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>O'zbekcha Terish Testi</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body {
       margin: 0;
@@ -13,9 +13,8 @@
       font-family: 'Courier New', monospace;
       height: 100vh;
       width: 100vw;
-      overflow: hidden;
+      overflow-x: hidden;
     }
-
     .container {
       display: flex;
       flex-direction: column;
@@ -26,40 +25,55 @@
       max-width: 900px;
       margin: 0 auto;
       text-align: center;
+      padding: 20px;
     }
-
+    #timer {
+      font-size: 1.1rem;
+      color: #7dcfff;
+      margin-bottom: 6px;
+      min-height: 1.4em;
+    }
     .quote {
-      font-size: 2rem;
-      line-height: 2.8rem;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
       word-wrap: break-word;
       user-select: none;
-      margin: 20px 0;
+      margin: 10px 0 20px 0;
       text-align: left;
       width: 100%;
+      max-height: 60vh;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      padding-right: 10px;
+      border-radius: 6px;
+      position: relative;
     }
-
-    .quote span.correct {
-      color: #9ece6a;
+    .quote span[data-original] {transition: color 0.06s ease;}
+    .quote span.correct[data-original] {color: #9ece6a;}
+    .quote span.incorrect[data-original] {color: #f7768e;}
+    .quote span.extra {color: #ff6b6b;text-decoration: underline;}
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      background-color: #7dcfff;
+      animation: blink 3s infinite;
+      vertical-align: bottom;
+      margin-left: -1px;
+      height: 1.4em;
     }
-
-    .quote span.incorrect {
-      color: #f7768e;
+    @keyframes blink {
+      0%, 50%, 100% {opacity: 1;}
+      25%, 75% {opacity: 0;}
     }
-
-    .quote span.active {
-      border-bottom: 2px solid #7dcfff;
-    }
-
     #stats {
-      margin: 20px 0;
-      font-size: 1.1rem;
+      margin: 10px 0 20px 0;
+      font-size: 1.05rem;
       color: #d900ff;
-      transition: opacity 0.3s ease;
+      min-height: 1.2em;
     }
-
     #restartLink {
       display: inline-block;
-      margin: 20px 0;
+      margin: 6px 0 20px 0;
       padding: 10px 20px;
       font-size: 1rem;
       background-color: #2a2e45;
@@ -69,18 +83,15 @@
       transition: opacity 0.3s ease;
       user-select: none;
     }
-
-    #restartLink:hover {
-      background-color: #3b3f5c;
-    }
-
+    #restartLink:hover {background-color: #3b3f5c;}
     .controls {
       display: flex;
       gap: 10px;
       margin: 10px 0;
       transition: opacity 0.3s ease;
+      flex-wrap: wrap;
+      justify-content:center;
     }
-
     .length-btn, .sound-toggle {
       padding: 8px 16px;
       font-size: 1rem;
@@ -92,303 +103,135 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
-    .length-btn:hover, .sound-toggle:hover {
-      background-color: #3b3f5c;
-      /* border-color: #7dcfff; */
-    }
-
+    .length-btn:hover, .sound-toggle:hover {background-color: #3b3f5c;}
     .length-btn.active, .sound-toggle.active {
       background-color: #7aa2f7;
       color: #1a1b26;
       border-color: #7aa2f7;
     }
-
-    .sound-toggle i {
-      margin-right: 5px;
-    }
-
-    h1 {
-      transition: opacity 0.3s ease;
-      margin: 10px 0;
-    }
-
-    .fade {
-      opacity: 0;
-      pointer-events: none;
-    }
+    .sound-toggle i {margin-right: 5px;}
+    h1 {transition: opacity 0.3s ease;margin: 10px 0;}
+    .fade {opacity: 0;pointer-events: none;}
   </style>
 </head>
 <body>
   <div class="container">
-    <h1> - O'zbekcha Tayping Qil Akasi😎..</h1>
-    
+    <h1 style="font-family: Georgia, serif;"> - O'zbekcha Tayping Qil Akasi😎..</h1>
     <div class="controls">
       <a href="#" class="length-btn" data-length="short">Qisqa</a>
       <a href="#" class="length-btn active" data-length="medium">O'rta</a>
       <a href="#" class="length-btn" data-length="long">Uzun</a>
+      <a href="#" class="length-btn" data-length="cs">CS TIIAME</a>
       <a href="#" class="sound-toggle active" id="soundToggle"><i class="fas fa-volume-up"></i></a>
     </div>
-
-    <div class="quote" id="quote"></div>
-
+    <div id="timer">⏱ 00:00</div>
+    <div class="quote" id="quote" aria-live="off"></div>
     <div id="stats"></div>
-
     <div id="restartLink">Qayta boshlash🔄</div>
-
-    <!-- Audio pool for correct sounds (used for correct keypress and backspace) -->
     <audio id="correctSound1" src="c.wav" preload="auto"></audio>
     <audio id="correctSound2" src="c.wav" preload="auto"></audio>
     <audio id="correctSound3" src="c.wav" preload="auto"></audio>
-    <!-- Audio pool for incorrect sounds -->
     <audio id="incorrectSound1" src="i.wav" preload="auto"></audio>
     <audio id="incorrectSound2" src="i.wav" preload="auto"></audio>
     <audio id="incorrectSound3" src="i.wav" preload="auto"></audio>
-    <!-- Single audio for test completion -->
     <audio id="testCompleteSound" src="s.wav" preload="auto"></audio>
   </div>
-
   <script>
-    const quoteEl = document.getElementById('quote');
-    const statsEl = document.getElementById('stats');
-    const restartLink = document.getElementById('restartLink');
-    const lengthButtons = document.querySelectorAll('.length-btn');
-    const soundToggle = document.getElementById('soundToggle');
-    const titleEl = document.querySelector('h1');
-    const controlsEl = document.querySelector('.controls');
-
-    // Audio pools
-    const correctSounds = [
-      document.getElementById('correctSound1'),
-      document.getElementById('correctSound2'),
-      document.getElementById('correctSound3')
-    ];
-    const incorrectSounds = [
-      document.getElementById('incorrectSound1'),
-      document.getElementById('incorrectSound2'),
-      document.getElementById('incorrectSound3')
-    ];
-    const testCompleteSound = document.getElementById('testCompleteSound');
-    let correctSoundIndex = 0;
-    let incorrectSoundIndex = 0;
-
-    const quotes = {
-      short: [
-        "Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.",
-        "Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.",
-        "Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.",
-        "Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.",
-        "Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.",
-        "Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.",
-        "Rim bir kunda qurilmagan.",
-        'Bilim Makkaga yetib borgan, lekin amal qilish "astanovka"da ham emas.',
-        "Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.",
-        "Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.",
+    const quoteEl=document.getElementById('quote'),statsEl=document.getElementById('stats'),restartLink=document.getElementById('restartLink'),lengthButtons=document.querySelectorAll('.length-btn'),soundToggle=document.getElementById('soundToggle'),timerEl=document.getElementById('timer'),titleEl=document.querySelector('h1'),controlsEl=document.querySelector('.controls');
+    const correctSounds=[correctSound1,correctSound2,correctSound3],incorrectSounds=[incorrectSound1,incorrectSound2,incorrectSound3],testCompleteSound=document.getElementById('testCompleteSound');
+    let correctSoundIndex=0,incorrectSoundIndex=0;
+    const quotes={
+      short:[
+        "Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.", 
+        "Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.", 
+        "Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.", 
+        "Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.", 
+        "Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.", 
+        "Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.", "Rim bir kunda qurilmagan.", 
+        'Bilim Makkaga yetib borgan, lekin amal qilish "astanovka"da ham emas.', 
+        "Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.", 
+        "Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.", 
         "Ikkita kitob o'qigandan bitta kitobni ikki marta o'qigan afzal."
       ],
-      medium: [
-        "Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.",
-        "Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.",
-        'Kimdir "qila olaman", kimdir "qila olmayman" deydi. Odatda ularning ikkisi ham haq.',
-        "Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.",
-        "Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.",
-        "Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.",
-        "Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!",
-        "O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.",
-        "Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.",
-        "Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.",
+      medium:[
+        "Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.", 
+        "Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.", 
+        'Kimdir "qila olaman", kimdir "qila olmayman" deydi. Odatda ularning ikkisi ham haq.', 
+        "Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.", 
+        "Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.", 
+        "Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.", 
+        "Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!", 
+        "O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.", 
+        "Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.", 
+        "Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.", 
         "Chalg'imay ishlang, kitob o'qing, o'ylang, yuring, yozing - g'alaba aniq, sabr qila olsangiz bas."
       ],
-      long: [
-        "Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.",
-        "Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar",
-        "Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.",
-        "Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.",
-        "Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.",
+      long:[
+        "Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.", 
+        "Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar", 
+        "Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.", 
+        "Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.", 
+        "Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.", 
         "Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."
-      ]
-    };
+      ],
+      cs:[
+        `Sobit-ul sayyorada inson o'zing, inson o'zing,
+Mulki olam ichra bir xoqon o'zing, sulton o'zing.
 
-    let currentQuote = "";
-    let charSpans = [];
-    let currentIndex = 0;
-    let startTime = null;
-    let ended = false;
-    let currentLength = "medium";
-    let soundEnabled = localStorage.getItem('soundEnabled') !== 'true';
+Sobit o'z ma'vosida, sayyor fazo dunyosida,
+Koinot sahrosida karvon o'zing, sarbon o'zing.
 
-    function updateSoundToggle() {
-      soundToggle.classList.toggle('active', soundEnabled);
-      soundToggle.innerHTML = `<i class="fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'}"></i>`;
-    }
+Shams - dil taftingdadur, sayyoralar kaftingdadur,
+Keng jahon zabtingdadur, bog'bon o'zing, posbon o'zing.
 
+Bu yorug' dunyo nadur? Koshonadur, vayronadur,
+Senga mehmonxonadur, mehmon o'zing, mezbon o'zing.
+
+Bunda oq birla qaro, zulmat, ziyo, shohu gado,
+Jang qilurlar doimo ul yon o'zing, bul yon o'zing.
+
+Sen balo, ham mubtalo, xayr ila kin, rostu riyo,
+Fitnagar olam aro fatton o'zing, qurbon o'zing.
+
+Goh adolat bog'ida, piri adovat gohida,
+O'z diling dargohida shayton o'zing, g'ilmon o'zing.
+
+Xormisan yo gulmisan, tojdormisan yo qulmisan,
+Cho'g'zmisan, bulbulmisan, nodon o'zing, xushxon o'zing.
+
+Bu hayot o'rmon ekan, jon borki, qasdi jon ekan,
+Bunda qatl oson ekan, sirtlon o'zing, jayron o'zing.
+
+Bu hayot ummon ekan, ummon abad gardon ekan,
+Qatradek sarson ekan, sarson o'zing, gardon o'zing.`]
+};
+    let currentQuote='',originalSpans=[],currentIndex=0,started=false,startTime=null,timerInterval=null,ended=false,currentLength='medium',soundEnabled=localStorage.getItem('soundEnabled')!=='false',typedHistory=[],cursorEl=null;
+    function updateSoundToggle(){soundToggle.classList.toggle('active',soundEnabled);soundToggle.innerHTML=`<i class="fas ${soundEnabled?'fa-volume-up':'fa-volume-mute'}"></i>`;}
     updateSoundToggle();
-
-    soundToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      soundEnabled = !soundEnabled;
-      localStorage.setItem('soundEnabled', soundEnabled);
-      updateSoundToggle();
-      console.log(`Sound toggled: ${soundEnabled ? 'On' : 'Off'}`);
+    soundToggle.addEventListener('click',e=>{e.preventDefault();soundEnabled=!soundEnabled;localStorage.setItem('soundEnabled',soundEnabled);updateSoundToggle();});
+    function getRandomQuote(l){const list=quotes[l];return list[Math.floor(Math.random()*list.length)];}
+    function renderQuote(){quoteEl.innerHTML='';currentQuote.split('').forEach(ch=>{const s=document.createElement('span');s.innerText=ch;s.dataset.original='1';quoteEl.appendChild(s);});originalSpans=Array.from(quoteEl.querySelectorAll('span[data-original]'));currentIndex=0;cursorEl=document.createElement('span');cursorEl.className='cursor';quoteEl.insertBefore(cursorEl,originalSpans[0]);stopTimer();started=false;startTime=null;ended=false;typedHistory=[];statsEl.innerText='';timerEl.innerText='⏱ 00:00';quoteEl.scrollTop=0;}
+    function startTest(l){currentLength=l||currentLength;currentQuote=getRandomQuote(currentLength);renderQuote();lengthButtons.forEach(b=>b.classList.toggle('active',b.dataset.length===currentLength));}
+    function startTimerIfNeeded(){if(started)return;started=true;startTime=Date.now();timerInterval=setInterval(()=>{const e=Date.now()-startTime;timerEl.innerText='⏱ '+formatTime(e);},250);}
+    function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+    function formatTime(ms){const s=Math.floor(ms/1000),m=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return`${m}:${ss}`;}
+    function playCorrectSound(){if(!soundEnabled)return;const s=correctSounds[correctSoundIndex];s.currentTime=0;s.play().catch(()=>{});correctSoundIndex=(correctSoundIndex+1)%correctSounds.length;}
+    function playIncorrectSound(){if(!soundEnabled)return;const s=incorrectSounds[incorrectSoundIndex];s.currentTime=0;s.play().catch(()=>{});incorrectSoundIndex=(incorrectSoundIndex+1)%incorrectSounds.length;}
+    function currentOriginalSpan(){return originalSpans[currentIndex]||null;}
+    function moveCursor(){const cur=currentOriginalSpan();if(cur)quoteEl.insertBefore(cursorEl,cur);else quoteEl.appendChild(cursorEl);cursorEl.scrollIntoView({block:'nearest',inline:'nearest'});}
+    function insertExtraChar(ch){const s=document.createElement('span');s.classList.add('extra');s.innerText=ch;quoteEl.insertBefore(s,cursorEl);typedHistory.push({el:s,type:'extra'});}
+    function removeLastTyped(){if(!typedHistory.length)return;const last=typedHistory.pop();if(last.type==='extra'){last.el.remove();}else if(last.type==='original'){last.el.classList.remove('correct','incorrect');if(currentIndex>0)currentIndex--;moveCursor();}}
+    function computeStats(){const c=quoteEl.querySelectorAll('span[data-original].correct').length,i=quoteEl.querySelectorAll('span[data-original].incorrect').length,e=quoteEl.querySelectorAll('span.extra').length,t=c+i+e,a=t===0?100:Math.round((c/t)*100),ms=Date.now()-startTime,m=ms/60000,w=m>0?Math.round((c/5)/m):0;return{a,w,ms};}
+    function finishTest(){ended=true;stopTimer();const{s,a,w,ms}=computeStats();statsEl.innerText=`Vaqt: ${formatTime(ms)} | WPM: ${w} | To'g'rilik: ${a}%`;if(soundEnabled)testCompleteSound.play().catch(()=>{});titleEl.classList.remove('fade');controlsEl.classList.remove('fade');}
+    document.addEventListener('keydown',e=>{if(ended)return;if(e.ctrlKey||e.altKey||e.metaKey)return;if(['CapsLock','Shift','Tab','Escape'].includes(e.key))return;if(!started)startTimerIfNeeded();if(e.key===' '||e.key==='Enter')e.preventDefault();if(e.key==='Backspace'){removeLastTyped();return;}
+      const typed=e.key==='Enter'?'\n':e.key;if(currentIndex>=originalSpans.length){if(typed.length===1||typed==='\n'){insertExtraChar(typed==='\n'?'_':typed);playIncorrectSound();}return;}
+      const exp=originalSpans[currentIndex].innerText;
+      if(typed===exp){originalSpans[currentIndex].classList.remove('incorrect');originalSpans[currentIndex].classList.add('correct');typedHistory.push({el:originalSpans[currentIndex],type:'original'});currentIndex++;moveCursor();playCorrectSound();if(currentIndex>=originalSpans.length)finishTest();return;}
+      if(typed==='\n'&&exp!=='\n'){insertExtraChar('_');playIncorrectSound();return;}
+      if(typed.length===1){insertExtraChar(typed);playIncorrectSound();}
     });
-
-    function getRandomQuote(length) {
-      const list = quotes[length];
-      return list[Math.floor(Math.random() * list.length)];
-    }
-
-    function renderQuote() {
-      quoteEl.innerHTML = '';
-      currentQuote.split('').forEach((char, i) => {
-        const span = document.createElement('span');
-        span.innerText = char;
-        if (i === 0) span.classList.add('active');
-        quoteEl.appendChild(span);
-      });
-      charSpans = quoteEl.querySelectorAll('span');
-      currentIndex = 0;
-      ended = false;
-      statsEl.innerText = "";
-      titleEl.classList.remove('fade');
-      controlsEl.classList.remove('fade');
-      statsEl.classList.remove('fade');
-      restartLink.classList.remove('fade');
-      correctSounds.forEach(sound => { sound.pause(); sound.currentTime = 0; });
-      incorrectSounds.forEach(sound => { sound.pause(); sound.currentTime = 0; });
-      testCompleteSound.pause();
-      testCompleteSound.currentTime = 0;
-      correctSoundIndex = 0;
-      incorrectSoundIndex = 0;
-      console.log('Quote rendered, sounds reset');
-    }
-
-    function startTest(length) {
-      currentLength = length || currentLength;
-      currentQuote = getRandomQuote(currentLength);
-      renderQuote();
-      startTime = null;
-      lengthButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.length === currentLength));
-    }
-
-    function endTest() {
-      ended = true;
-      if (startTime) {
-        const elapsed = (new Date() - startTime) / 1000;
-        const words = currentQuote.split(' ').length;
-        const wpm = Math.round((words / elapsed) * 60);
-        const correct = [...charSpans].filter(span => span.classList.contains('correct')).length;
-        const accuracy = Math.round((correct / currentQuote.length) * 100);
-        statsEl.innerText = `Tezlik: ${wpm}ta so'z bir daqiqada | To'g'rilik: ${accuracy}%`;
-        titleEl.classList.remove('fade');
-        controlsEl.classList.remove('fade');
-        statsEl.classList.remove('fade');
-        restartLink.classList.remove('fade');
-        if (soundEnabled) {
-          console.log('Playing test complete sound');
-          testCompleteSound.play().catch(err => console.error('Test complete sound error:', err));
-        }
-      }
-    }
-
-    function enterFocusMode() {
-      titleEl.classList.add('fade');
-      controlsEl.classList.add('fade');
-      statsEl.classList.add('fade');
-      restartLink.classList.add('fade');
-    }
-
-    function exitFocusMode() {
-      titleEl.classList.remove('fade');
-      controlsEl.classList.remove('fade');
-      statsEl.classList.remove('fade');
-      restartLink.classList.remove('fade');
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (ended || !currentQuote) return;
-
-      if (
-        e.ctrlKey || e.altKey || e.metaKey ||
-        e.key === "CapsLock" ||
-        e.key === "Shift" ||
-        e.key === "Tab" ||
-        e.key === "Escape" ||
-        e.key.length > 1 && e.key !== "Backspace"
-      ) return;
-
-      if (!startTime) {
-        startTime = new Date();
-      }
-
-      enterFocusMode();
-
-      const expectedChar = currentQuote[currentIndex];
-      const key = e.key;
-
-      if (key.length === 1) {
-        const span = charSpans[currentIndex];
-
-        if (key === expectedChar) {
-          span.classList.add('correct');
-          if (soundEnabled) {
-            console.log('Playing correct sound');
-            const sound = correctSounds[correctSoundIndex];
-            sound.currentTime = 0;
-            sound.play().catch(err => console.error('Correct sound error:', err));
-            correctSoundIndex = (correctSoundIndex + 1) % correctSounds.length;
-          }
-        } else {
-          span.classList.add('incorrect');
-          if (soundEnabled) {
-            console.log('Playing incorrect sound');
-            const sound = incorrectSounds[incorrectSoundIndex];
-            sound.currentTime = 0;
-            sound.play().catch(err => console.error('Incorrect sound error:', err));
-            incorrectSoundIndex = (incorrectSoundIndex + 1) % incorrectSounds.length;
-          }
-        }
-
-        span.classList.remove('active');
-        currentIndex++;
-
-        if (currentIndex < charSpans.length) {
-          charSpans[currentIndex].classList.add('active');
-        } else {
-          endTest();
-        }
-      } else if (key === 'Backspace' && currentIndex > 0) {
-        if (soundEnabled) {
-          console.log('Playing backspace sound (correct.wav)');
-          const sound = correctSounds[correctSoundIndex];
-          sound.currentTime = 0;
-          sound.play().catch(err => console.error('Backspace sound error:', err));
-          correctSoundIndex = (correctSoundIndex + 1) % correctSounds.length;
-        }
-        charSpans[currentIndex].classList.remove('active');
-        currentIndex--;
-        const span = charSpans[currentIndex];
-        span.classList.remove('correct', 'incorrect');
-        span.classList.add('active');
-      }
-    });
-
-    document.addEventListener('mousemove', () => {
-      if (!ended && startTime) {
-        exitFocusMode();
-      }
-    });
-
-    restartLink.addEventListener('click', () => {
-      startTest();
-    });
-
-    lengthButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        startTest(button.dataset.length);
-      });
-    });
-
+    restartLink.addEventListener('click',()=>startTest(currentLength));
+    lengthButtons.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();startTest(b.dataset.length);}));
     startTest();
   </script>
 </body>
