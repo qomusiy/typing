@@ -5,234 +5,150 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>O'zbekcha Terish Testi</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background-color: #1a1b26;
-      color: #c0caf5;
-      font-family: 'Courier New', monospace;
-      height: 100vh;
-      width: 100vw;
-      overflow-x: hidden;
+    :root {
+      --bg-color: #1a1b26;
+      --text-color: #c0caf5;
+      --accent-color: #7dcfff;
+      --correct-color: #9ece6a;
+      --incorrect-color: #f7768e;
+      --extra-color: #ff6b6b;
+      --stats-color: #d900ff;
+      --button-bg: #2a2e45;
+      --button-hover: #3b3f5c;
+      --active-color: #7aa2f7;
+      --font-title: 'Orbitron', sans-serif;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 20px;
-    }
-    #timer {
-      font-size: 1.1rem;
-      color: #7dcfff;
-      margin-bottom: 6px;
-      min-height: 1.4em;
-    }
-    .quote {
-      font-size: 1.6rem;
-      line-height: 2.4rem;
-      word-wrap: break-word;
-      user-select: none;
-      margin: 10px 0 20px 0;
-      text-align: left;
-      width: 100%;
-      max-height: 60vh;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      padding-right: 10px;
-      border-radius: 6px;
-      position: relative;
-    }
-    .quote span[data-original] {transition: color 0.06s ease;}
-    .quote span.correct[data-original] {color: #9ece6a;}
-    .quote span.incorrect[data-original] {color: #f7768e;}
-    .quote span.extra {color: #ff6b6b;text-decoration: underline;}
-    .cursor {
-      display: inline-block;
-      width: 2px;
-      background-color: #7dcfff;
-      animation: blink 3s infinite;
-      vertical-align: bottom;
-      margin-left: -1px;
-      height: 1.4em;
-    }
-    @keyframes blink {
-      0%, 50%, 100% {opacity: 1;}
-      25%, 75% {opacity: 0;}
-    }
-    #stats {
-      margin: 10px 0 20px 0;
-      font-size: 1.05rem;
-      color: #d900ff;
-      min-height: 1.2em;
-    }
-    #restartLink {
-      display: inline-block;
-      margin: 6px 0 20px 0;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #2a2e45;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.3s ease;
-      user-select: none;
-    }
-    #restartLink:hover {background-color: #3b3f5c;}
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0;
-      transition: opacity 0.3s ease;
-      flex-wrap: wrap;
-      justify-content:center;
-    }
-    .length-btn, .sound-toggle {
-      padding: 8px 16px;
-      font-size: 1rem;
-      background-color: #2a2e45;
-      color: #c0caf5;
-      border: 1px solid #2a2e45;
-      border-radius: 5px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .length-btn:hover, .sound-toggle:hover {background-color: #3b3f5c;}
-    .length-btn.active, .sound-toggle.active {
-      background-color: #7aa2f7;
-      color: #1a1b26;
-      border-color: #7aa2f7;
-    }
-    .sound-toggle i {margin-right: 5px;}
-    h1 {transition: opacity 0.3s ease;margin: 10px 0;}
-    .fade {opacity: 0;pointer-events: none;}
+    [data-theme="yellow"]{--bg-color:#000;--text-color:#ffff00;--accent-color:#ffff00;--correct-color:#00ff00;--incorrect-color:#ff0000;--extra-color:#ff6b6b;--stats-color:#ff00ff;--button-bg:#111;--button-hover:#222;--active-color:#ffff00}
+    [data-theme="neon"]{--bg-color:#0a0a0a;--text-color:#00ffff;--accent-color:#ff00ff;--correct-color:#00ff00;--incorrect-color:#ff0080;--extra-color:#ff6600;--stats-color:#ffff00;--button-bg:#1a1a2e;--button-hover:#16213e;--active-color:#00ffff}
+    [data-theme="ocean"]{--bg-color:#001122;--text-color:#add8e6;--accent-color:#87ceeb;--correct-color:#20b2aa;--incorrect-color:#dc143c;--extra-color:#ff8c00;--stats-color:#9370db;--button-bg:#003366;--button-hover:#004488;--active-color:#87ceeb}
+    [data-theme="minimal"]{--bg-color:#fff;--text-color:#333;--accent-color:#000;--correct-color:#4caf50;--incorrect-color:#f44336;--extra-color:#ff9800;--stats-color:#9c27b0;--button-bg:#f5f5f5;--button-hover:#e0e0e0;--active-color:#333}
+
+    body{margin:0;background:var(--bg-color);background-size:400% 400%;animation:g 15s ease infinite;color:var(--text-color);font-family:'Courier New',monospace;height:100vh;width:100vw;overflow:hidden;position:relative;transition:all .3s}
+    body.typing{animation:none;background:var(--bg-color)}
+    @keyframes g{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    [data-theme="yellow"] body{background:linear-gradient(45deg,#000,#111,#000)}
+    [data-theme="neon"] body{background:linear-gradient(45deg,#0a0a0a,#1a1a2e,#0a0a0a)}
+    [data-theme="ocean"] body{background:linear-gradient(45deg,#001122,#003366,#001122)}
+    [data-theme="minimal"] body{background:linear-gradient(45deg,#fff,#f5f5f5,#fff)}
+
+    .container{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
+    #timer{font-size:1.1rem;color:var(--accent-color);margin-bottom:6px}
+    .quote{font-size:1.6rem;line-height:2.4rem;user-select:none;margin:10px 0 20px;width:100%;max-height:60vh;overflow-y:auto;white-space:pre-wrap;padding-right:10px}
+    .quote span[data-original]{transition:color .06s}
+    .quote span.correct[data-original]{color:var(--correct-color)}
+    .quote span.incorrect[data-original]{color:var(--incorrect-color)}
+    .quote span.extra{color:var(--extra-color);text-decoration:underline}
+    .cursor{display:inline-block;width:2px;background:var(--accent-color);animation:b 3s infinite;height:1.4em;margin-left:-1px;vertical-align:bottom}
+    @keyframes b{0%,50%,100%{opacity:1}25%,75%{opacity:0}}
+    #stats{margin:10px 0 20px;font-size:1.05rem;color:var(--stats-color)}
+    #restartLink{display:inline-block;padding:10px 20px;background:var(--button-bg);color:var(--text-color);border-radius:6px;cursor:pointer;transition:all .3s;border:1px solid var(--button-bg)}
+    #restartLink:hover{background:var(--button-hover)}
+    .controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center}
+    .length-btn,.sound-toggle{padding:8px 16px;background:var(--button-bg);color:var(--text-color);border:1px solid var(--button-bg);border-radius:5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;text-decoration:none!important}
+    .length-btn:hover,.sound-toggle:hover{background:var(--button-hover)}
+    .length-btn.active,.sound-toggle.active{background:var(--active-color);color:var(--bg-color);border-color:var(--active-color)}
+    .theme-selector{position:absolute;top:10px;right:10px;display:flex;gap:5px;z-index:10}
+    .theme-btn{width:40px;height:40px;background:var(--button-bg);color:var(--text-color);border:1px solid var(--button-bg);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .theme-btn:hover{background:var(--button-hover)}
+    .theme-btn.active{background:var(--active-color);color:var(--bg-color)}
+    h1{transition:opacity .3s;margin:10px 0;font-family:var(--font-title)}
+    .fade{opacity:0;pointer-events:none}
+
+    /* Confetti celebration only */
+    #celebration{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+    canvas#confetti{position:absolute;top:0;left:0;width:100%;height:100%}
   </style>
 </head>
-<body>
+<body data-theme="dark">
+
+  <div id="celebration"><canvas id="confetti"></canvas></div>
+
+  <div class="theme-selector">
+    <button class="theme-btn active" data-theme="dark" title="Dark"><i class="fas fa-moon"></i></button>
+    <button class="theme-btn" data-theme="yellow" title="Yellow"><i class="fas fa-sun"></i></button>
+    <button class="theme-btn" data-theme="neon" title="Neon"><i class="fas fa-lightbulb"></i></button>
+    <button class="theme-btn" data-theme="ocean" title="Ocean"><i class="fas fa-water"></i></button>
+    <button class="theme-btn" data-theme="minimal" title="Minimal"><i class="fas fa-palette"></i></button>
+  </div>
+
   <div class="container">
-    <h1 style="font-family: Georgia, serif;"> - O'zbekcha Tayping Qil Akasi😎..</h1>
+    <h1>- O'zbekcha Tayping Qil Akasi😎..</h1>
     <div class="controls">
-      <a href="#" class="length-btn" data-length="short">Qisqa</a>
-      <a href="#" class="length-btn active" data-length="medium">O'rta</a>
-      <a href="#" class="length-btn" data-length="long">Uzun</a>
-      <a href="#" class="length-btn" data-length="cs">CS TIIAME</a>
+      <a href="#" class="length-btn" data-length="short"><i class="fas fa-clock"></i> Qisqa</a>
+      <a href="#" class="length-btn active" data-length="medium"><i class="fas fa-book"></i> O'rta</a>
+      <a href="#" class="length-btn" data-length="long"><i class="fas fa-scroll"></i> Uzun</a>
+      <a href="#" class="length-btn" data-length="cs"><i class="fas fa-code"></i> CS TIIAME</a>
       <a href="#" class="sound-toggle active" id="soundToggle"><i class="fas fa-volume-up"></i></a>
     </div>
-    <div id="timer">⏱ 00:00</div>
-    <div class="quote" id="quote" aria-live="off"></div>
+    <div id="timer">00:00</div>
+    <div class="quote" id="quote"></div>
     <div id="stats"></div>
-    <div id="restartLink">Qayta boshlash🔄</div>
-    <audio id="correctSound1" src="c.wav" preload="auto"></audio>
-    <audio id="correctSound2" src="c.wav" preload="auto"></audio>
-    <audio id="correctSound3" src="c.wav" preload="auto"></audio>
-    <audio id="incorrectSound1" src="i.wav" preload="auto"></audio>
-    <audio id="incorrectSound2" src="i.wav" preload="auto"></audio>
-    <audio id="incorrectSound3" src="i.wav" preload="auto"></audio>
-    <audio id="testCompleteSound" src="s.wav" preload="auto"></audio>
+    <div id="restartLink"><i class="fas fa-redo"></i> Qayta boshlash</div>
+
+    <audio id="c1" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
+    <audio id="c2" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
+    <audio id="c3" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
+    <audio id="i1" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
+    <audio id="i2" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
+    <audio id="i3" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
+    <audio id="complete" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/s.wav" preload="auto"></audio>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <script>
-    const quoteEl=document.getElementById('quote'),statsEl=document.getElementById('stats'),restartLink=document.getElementById('restartLink'),lengthButtons=document.querySelectorAll('.length-btn'),soundToggle=document.getElementById('soundToggle'),timerEl=document.getElementById('timer'),titleEl=document.querySelector('h1'),controlsEl=document.querySelector('.controls');
-    const correctSounds=[correctSound1,correctSound2,correctSound3],incorrectSounds=[incorrectSound1,incorrectSound2,incorrectSound3],testCompleteSound=document.getElementById('testCompleteSound');
-    let correctSoundIndex=0,incorrectSoundIndex=0;
-    const quotes={
-      short:[
-        "Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.", 
-        "Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.", 
-        "Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.", 
-        "Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.", 
-        "Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.", 
-        "Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.", "Rim bir kunda qurilmagan.", 
-        'Bilim Makkaga yetib borgan, lekin amal qilish "astanovka"da ham emas.', 
-        "Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.", 
-        "Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.", 
-        "Ikkita kitob o'qigandan bitta kitobni ikki marta o'qigan afzal."
-      ],
-      medium:[
-        "Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.", 
-        "Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.", 
-        'Kimdir "qila olaman", kimdir "qila olmayman" deydi. Odatda ularning ikkisi ham haq.', 
-        "Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.", 
-        "Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.", 
-        "Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.", 
-        "Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!", 
-        "O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.", 
-        "Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.", 
-        "Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.", 
-        "Chalg'imay ishlang, kitob o'qing, o'ylang, yuring, yozing - g'alaba aniq, sabr qila olsangiz bas."
-      ],
-      long:[
-        "Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.", 
-        "Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar", 
-        "Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.", 
-        "Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.", 
-        "Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.", 
-        "Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."
-      ],
-      cs:[
-        `Mash'ali fikrat - sening, ham changali vahshat sening,
-G'ayratu g'aflat sening, javlon o'zing, uryon o'zing.
+    const q=document.getElementById('quote'),s=document.getElementById('stats'),r=document.getElementById('restartLink'),
+          l=document.querySelectorAll('.length-btn'),t=document.getElementById('soundToggle'),ti=document.getElementById('timer'),
+          h=document.querySelector('h1'),c=document.querySelector('.controls'),th=document.querySelectorAll('.theme-btn');
 
-Qildingu oyda xirom, ham yerda qon to'kding harom,
-Ushbu holingdan mudom xandon o'zing, giryon o'zing.
+    const cs=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')];
+    const ic=[document.getElementById('i1'),document.getElementById('i2'),document.getElementById('i3')];
+    const fin=document.getElementById('complete');
 
-Minding ilm narvoniga, chiqding funun osmoniga,
-Bu jahon ayvoniga arkon o'zing, vayron o'zing.
+    let ci=0,ii=0,quote='',spans=[],idx=0,start=false,time=null,int=null,end=false,len='medium',sound=localStorage.getItem('soundEnabled')!=='false',
+        hist=[],cur=null,theme=localStorage.getItem('theme')||'dark';
 
-Zarrani ijod etib, dahshat balo bunyod etib,
-Oqibatni yod etib, hayron o'zing, hayron o'zing.
+    document.body.dataset.theme=theme;
+    th.forEach(b=>b.classList.toggle('active',b.dataset.theme===theme));
 
-Bog'i arz obod erur sendin agar imdod erur,
-Yo'qsa u barbod erur, to'fon o'zing, to'g'on o'zing.
+    const quotes={short:["Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.","Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.","Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.","Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.","Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.","Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.","Rim bir kunda qurilmagan.","Bilim Makkaga yetib borgan, lekin amal qilish \"astanovka\"da ham emas.","Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.","Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.","Ikkita kitob o'qigandan bitta kitobni ikki marta o'qigan afzal."],
+      medium:["Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.","Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.","Kimdir \"qila olaman\", kimdir \"qila olmayman\" deydi. Odatda ularning ikkisi ham haq.","Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.","Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.","Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.","Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!","O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.","Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.","Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.","Chalg'imay ishlang, kitob o'qing, o'ylang, yuring, yozing - g'alaba aniq, sabr qila olsangiz bas."],
+      long:["Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.","Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar","Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.","Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.","Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.","Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."],
+      cs:["Mash'ali fikrat - sening, ham changali vahshat sening,\nG'ayratu g'aflat sening, javlon o'zing, uryon o'zing.\n\nQildingu oyda xirom, ham yerda qon to'kding harom,\nUshbu holingdan mudom xandon o'zing, giryon o'zing.\n\nMinding ilm narvoniga, chiqding funun osmoniga,\nBu jahon ayvoniga arkon o'zing, vayron o'zing.\n\nZarrani ijod etib, dahshat balo bunyod etib,\nOqibatni yod etib, hayron o'zing, hayron o'zing.\n\nBog'i arz obod erur sendin agar imdod erur,\nYo'qsa u barbod erur, to'fon o'zing, to'g'on o'zing.\n\nSen hilol, yulduz, salib, Tavrot, Zaburdin yuksalib,\nBoymisan yoki g'arib, komron o'zing, yakson o'zing.\n\nKim farangi, kim habash, irq, qon talash, iymon talash,\nShulmi insondek yashash, armon o'zing, afg'on o'zing.\n\nMamlakatga mamlakat, millatga millat bo'lsa qasd,\nQilg'uchi so'ng oqibat armon o'zing, afg'on o'zing.\n\nOnayizoring - zamin, tanho yo'gu boring - zamin,\nXasta bemoring - zamin, o'g'lon o'zing, darmon o'zing.\n\nBag'rida yotquchi - sen, ne'matlarin totquchi - sen,\nTig' bo'lib botquchi - sen, paykon o'zing, qalqon o'zing."]};
 
-Sen hilol, yulduz, salib, Tavrot, Zaburdin yuksalib,
-Boymisan yoki g'arib, komron o'zing, yakson o'zing.
+    function rand(l){return quotes[l][Math.floor(Math.random()*quotes[l].length)]}
+    function render(){q.innerHTML='';quote.split('').forEach(ch=>{let sp=document.createElement('span');sp.textContent=ch;sp.dataset.original=1;q.appendChild(sp)});spans=[...q.querySelectorAll('[data-original]')];idx=0;cur=document.createElement('span');cur.className='cursor';q.insertBefore(cur,spans[0]||q);stop();start=false;time=null;end=false;hist=[];s.innerText='';ti.innerText='00:00';q.scrollTop=0}
+    function begin(l){len=l||len;quote=rand(len);render();l.forEach(b=>b.classList.toggle('active',b.dataset.length===len));document.getElementById('celebration').style.opacity=0}
+    function timer(){if(start)return;start=true;document.body.classList.add('typing');time=Date.now();int=setInterval(()=>{ti.innerText=fmt(Date.now()-time)},250)}
+    function stop(){clearInterval(int);int=null}
+    function fmt(ms){let sec=Math.floor(ms/1000),m=('0'+Math.floor(sec/60)).slice(-2),ss=('0'+sec%60).slice(-2);return m+':'+ss}
+    function correct(){if(!sound)return;let a=cs[ci];a.currentTime=0;a.play().catch(()=>{});ci=(ci+1)%3}
+    function wrong(){if(!sound)return;let a=ic[ii];a.currentTime=0;a.play().catch(()=>{});ii=(ii+1)%3}
+    function move(){let n=spans[idx];if(n)q.insertBefore(cur,n);else q.appendChild(cur);cur.scrollIntoView({block:'nearest'})}
+    function extra(ch){let sp=document.createElement('span');sp.className='extra';sp.textContent=ch;q.insertBefore(sp,cur);hist.push({el:sp,type:'extra'})}
+    function back(){if(!hist.length)return;let last=hist.pop();if(last.type==='extra')last.el.remove();else{last.el.classList.remove('correct','incorrect');if(idx>0)idx--;move()}}
+    function stats(){let cor=q.querySelectorAll('[data-original].correct').length,inc=q.querySelectorAll('[data-original].incorrect').length,ex=q.querySelectorAll('.extra').length,tot=cor+inc+ex,acc=tot?Math.round(cor/tot*100):100,ms=Date.now()-time,w=ms/60000?(cor/5)/(ms/60000):0;return{acc,w,ms}}
+    function done(){end=true;document.body.classList.remove('typing');stop();let{a:w,acc:a,ms:m}=stats();s.innerText=`Vaqt: ${fmt(m)} | WPM: ${Math.round(w)} | To'g'rilik: ${a}%`;if(sound)fin.play().catch(()=>{});h.classList.remove('fade');c.classList.remove('fade');if(a===100)party()}
+    function party(){let cel=document.getElementById('celebration');cel.style.opacity=1;confetti({particleCount:400,spread:100,origin:{y:0.6}});setTimeout(()=>confetti({particleCount:200,angle:60,origin:{x:0}}),300);setTimeout(()=>confetti({particleCount:200,angle:120,origin:{x:1}}),600);setTimeout(()=>cel.style.opacity=0,6000)}
 
-Kim farangi, kim habash, irq, qon talash, iymon talash,
-Shulmi insondek yashash, armon o'zing, afg'on o'zing.
-
-Mamlakatga mamlakat, millatga millat bo'lsa qasd,
-Qilg'uchi so'ng oqibat armon o'zing, afg'on o'zing.
-
-Onayizoring - zamin, tanho yo'gu boring - zamin,
-Xasta bemoring - zamin, o'g'lon o'zing, darmon o'zing.
-
-Bag'rida yotquchi - sen, ne'matlarin totquchi - sen,
-Tig' bo'lib botquchi - sen, paykon o'zing, qalqon o'zing.`]
-};
-    let currentQuote='',originalSpans=[],currentIndex=0,started=false,startTime=null,timerInterval=null,ended=false,currentLength='medium',soundEnabled=localStorage.getItem('soundEnabled')!=='false',typedHistory=[],cursorEl=null;
-    function updateSoundToggle(){soundToggle.classList.toggle('active',soundEnabled);soundToggle.innerHTML=`<i class="fas ${soundEnabled?'fa-volume-up':'fa-volume-mute'}"></i>`;}
-    updateSoundToggle();
-    soundToggle.addEventListener('click',e=>{e.preventDefault();soundEnabled=!soundEnabled;localStorage.setItem('soundEnabled',soundEnabled);updateSoundToggle();});
-    function getRandomQuote(l){const list=quotes[l];return list[Math.floor(Math.random()*list.length)];}
-    function renderQuote(){quoteEl.innerHTML='';currentQuote.split('').forEach(ch=>{const s=document.createElement('span');s.innerText=ch;s.dataset.original='1';quoteEl.appendChild(s);});originalSpans=Array.from(quoteEl.querySelectorAll('span[data-original]'));currentIndex=0;cursorEl=document.createElement('span');cursorEl.className='cursor';quoteEl.insertBefore(cursorEl,originalSpans[0]);stopTimer();started=false;startTime=null;ended=false;typedHistory=[];statsEl.innerText='';timerEl.innerText='⏱ 00:00';quoteEl.scrollTop=0;}
-    function startTest(l){currentLength=l||currentLength;currentQuote=getRandomQuote(currentLength);renderQuote();lengthButtons.forEach(b=>b.classList.toggle('active',b.dataset.length===currentLength));}
-    function startTimerIfNeeded(){if(started)return;started=true;startTime=Date.now();timerInterval=setInterval(()=>{const e=Date.now()-startTime;timerEl.innerText='⏱ '+formatTime(e);},250);}
-    function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
-    function formatTime(ms){const s=Math.floor(ms/1000),m=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return`${m}:${ss}`;}
-    function playCorrectSound(){if(!soundEnabled)return;const s=correctSounds[correctSoundIndex];s.currentTime=0;s.play().catch(()=>{});correctSoundIndex=(correctSoundIndex+1)%correctSounds.length;}
-    function playIncorrectSound(){if(!soundEnabled)return;const s=incorrectSounds[incorrectSoundIndex];s.currentTime=0;s.play().catch(()=>{});incorrectSoundIndex=(incorrectSoundIndex+1)%incorrectSounds.length;}
-    function currentOriginalSpan(){return originalSpans[currentIndex]||null;}
-    function moveCursor(){const cur=currentOriginalSpan();if(cur)quoteEl.insertBefore(cursorEl,cur);else quoteEl.appendChild(cursorEl);cursorEl.scrollIntoView({block:'nearest',inline:'nearest'});}
-    function insertExtraChar(ch){const s=document.createElement('span');s.classList.add('extra');s.innerText=ch;quoteEl.insertBefore(s,cursorEl);typedHistory.push({el:s,type:'extra'});}
-    function removeLastTyped(){if(!typedHistory.length)return;const last=typedHistory.pop();if(last.type==='extra'){last.el.remove();}else if(last.type==='original'){last.el.classList.remove('correct','incorrect');if(currentIndex>0)currentIndex--;moveCursor();}}
-    function computeStats(){const c=quoteEl.querySelectorAll('span[data-original].correct').length,i=quoteEl.querySelectorAll('span[data-original].incorrect').length,e=quoteEl.querySelectorAll('span.extra').length,t=c+i+e,a=t===0?100:Math.round((c/t)*100),ms=Date.now()-startTime,m=ms/60000,w=m>0?Math.round((c/5)/m):0;return{a,w,ms};}
-    function finishTest(){ended=true;stopTimer();const{s,a,w,ms}=computeStats();statsEl.innerText=`Vaqt: ${formatTime(ms)} | WPM: ${w} | To'g'rilik: ${a}%`;if(soundEnabled)testCompleteSound.play().catch(()=>{});titleEl.classList.remove('fade');controlsEl.classList.remove('fade');}
-    document.addEventListener('keydown',e=>{if(ended)return;if(e.ctrlKey||e.altKey||e.metaKey)return;if(['CapsLock','Shift','Tab','Escape'].includes(e.key))return;if(!started)startTimerIfNeeded();if(e.key===' '||e.key==='Enter')e.preventDefault();if(e.key==='Backspace'){removeLastTyped();return;}
-      const typed=e.key==='Enter'?'\n':e.key;if(currentIndex>=originalSpans.length){if(typed.length===1||typed==='\n'){insertExtraChar(typed==='\n'?'_':typed);playIncorrectSound();}return;}
-      const exp=originalSpans[currentIndex].innerText;
-      if(typed===exp){originalSpans[currentIndex].classList.remove('incorrect');originalSpans[currentIndex].classList.add('correct');typedHistory.push({el:originalSpans[currentIndex],type:'original'});currentIndex++;moveCursor();playCorrectSound();if(currentIndex>=originalSpans.length)finishTest();return;}
-      if(typed==='\n'&&exp!=='\n'){insertExtraChar('_');playIncorrectSound();return;}
-      if(typed.length===1){insertExtraChar(typed);playIncorrectSound();}
+    document.addEventListener('keydown',e=>{
+      if(end||e.ctrlKey||e.altKey||e.metaKey||['CapsLock','Shift','Tab','Escape'].includes(e.key))return;
+      if(!start)timer();
+      if(e.key==='Backspace'){back();return}
+      let ch=e.key==='Enter'?'\n':e.key;
+      if(idx>=spans.length){if(ch.length===1||ch==='\n'){extra(ch==='\n'?'_':ch);wrong()}return}
+      let exp=spans[idx].textContent;
+      if(ch===exp){spans[idx].classList.add('correct');hist.push({el:spans[idx],type:'original'});idx++;move();correct();if(idx>=spans.length)done()}
+      else{if(ch.length===1||ch==='\n'){extra(ch==='\n'?'_':ch);wrong()}}
     });
-    restartLink.addEventListener('click',()=>startTest(currentLength));
-    lengthButtons.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();startTest(b.dataset.length);}));
-    startTest();
+
+    r.onclick=()=>begin(len);
+    l.forEach(b=>b.onclick=e=>{e.preventDefault();begin(b.dataset.length)});
+    t.onclick=e=>{e.preventDefault();sound=!sound;localStorage.setItem('soundEnabled',sound);t.classList.toggle('active',sound);t.innerHTML=`<i class="fas ${sound?'fa-volume-up':'fa-volume-mute'}"></i>`};
+    th.forEach(b=>b.onclick=e=>{e.preventDefault();theme=b.dataset.theme;document.body.dataset.theme=theme;localStorage.setItem('theme',theme);th.forEach(x=>x.classList.toggle('active',x.dataset.theme===theme))});
+
+    begin();
   </script>
 </body>
 </html>
