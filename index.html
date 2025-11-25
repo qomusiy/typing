@@ -19,6 +19,7 @@
       --button-hover: #3b3f5c;
       --active-color: #7aa2f7;
       --font-title: 'Orbitron', sans-serif;
+      --font-size: 1.6rem;
     }
     [data-theme="yellow"]{--bg-color:#000;--text-color:#ffff00;--accent-color:#ffff00;--correct-color:#00ff00;--incorrect-color:#ff0000;--extra-color:#ff6b6b;--stats-color:#ff00ff;--button-bg:#111;--button-hover:#222;--active-color:#ffff00}
     [data-theme="neon"]{--bg-color:#0a0a0a;--text-color:#00ffff;--accent-color:#ff00ff;--correct-color:#00ff00;--incorrect-color:#ff0080;--extra-color:#ff6600;--stats-color:#ffff00;--button-bg:#1a1a2e;--button-hover:#16213e;--active-color:#00ffff}
@@ -33,9 +34,11 @@
     [data-theme="ocean"] body{background:linear-gradient(45deg,#001122,#003366,#001122)}
     [data-theme="minimal"] body{background:linear-gradient(45deg,#fff,#f5f5f5,#fff)}
 
-    .container{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
+    .container{display:flex;flex-direction:column;align-items:center;height:100vh;max-width:900px;margin:0 auto;padding:5px 20px;position:relative;z-index:1}
+    .header{align-items:center;margin-bottom:0}
+    .main-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;padding-top:5px}
     #timer{font-size:1.1rem;color:var(--accent-color);margin-bottom:6px}
-    .quote{font-size:1.6rem;line-height:2.4rem;user-select:none;margin:10px 0 20px;width:100%;max-height:60vh;overflow-y:auto;white-space:pre-wrap;padding-right:10px}
+    .quote{font-size:var(--font-size);line-height:calc(var(--font-size) * 1.5);user-select:none;margin:0 0 20px;width:100%;max-height:60vh;overflow-y:auto;white-space:pre-wrap;padding-right:10px}
     .quote span[data-original]{transition:color .06s}
     .quote span.correct[data-original]{color:var(--correct-color)}
     .quote span.incorrect[data-original]{color:var(--incorrect-color)}
@@ -43,29 +46,31 @@
 
     /* Smooth cursor */
     .cursor{
-      display:inline-block;
-      width:2px;
-      height:1.6em;
+      display:inline-block !important;
+      width: 2px !important;
+      min-width: 2px !important;
+      max-width: 2px !important;
+      height:var(--font-size);
       background:var(--accent-color);
-      margin-left:-2px;
-      vertical-align:bottom;
+      vertical-align:middle;
       border-radius:2px;
       animation:cursorPulse 1.2s infinite ease-in-out;
-      box-shadow:0 0 8px var(--accent-color);
-      transform-origin:center bottom;
+      transform-origin:center;
+      flex-shrink: 0;
     }
     @keyframes cursorPulse{
-      0%,100%{opacity:1;    transform:scaleY(1);}
-      50%    {opacity:0.4;  transform:scaleY(0.88);}
+      0%,100%{opacity:1;}
+      50%    {opacity:0.4;}
     }
 
     #stats{margin:10px 0 20px;font-size:1.05rem;color:var(--stats-color)}
     #restartLink{display:inline-block;padding:10px 20px;background:var(--button-bg);color:var(--text-color);border-radius:6px;cursor:pointer;transition:all .3s;border:1px solid var(--button-bg)}
     #restartLink:hover{background:var(--button-hover)}
-    .controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center}
-    .length-btn,.sound-toggle{padding:8px 16px;background:var(--button-bg);color:var(--text-color);border:1px solid var(--button-bg);border-radius:5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;text-decoration:none!important}
-    .length-btn:hover,.sound-toggle:hover{background:var(--button-hover)}
-    .length-btn.active,.sound-toggle.active{background:var(--active-color);color:var(--bg-color);border-color:var(--active-color)}
+    .controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center;align-items:center}
+    .length-btn,.font-btn{padding:8px 16px;background:var(--button-bg);color:var(--text-color);border:1px solid var(--button-bg);border-radius:5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;text-decoration:none!important}
+    .length-btn:hover,.font-btn:hover{background:var(--button-hover)}
+    .length-btn.active,.font-btn.active{background:var(--active-color);color:var(--bg-color);border-color:var(--active-color)}
+    #fontSizeDisplay{font-weight:bold;color:var(--accent-color);margin:0 10px}
 
     /* Theme selector – buttons now show their own theme colors */
     .theme-selector{position:absolute;top:10px;right:10px;display:flex;gap:5px;z-index:10}
@@ -109,53 +114,64 @@
   </div>
 
   <div class="container">
-    <h1>- O'zbekcha Tayping Qil Akasi..</h1>
-    <div class="controls">
-      <a href="#" class="length-btn" data-length="short"><i class="fas fa-clock"></i> Qisqa</a>
-      <a href="#" class="length-btn" data-length="medium"><i class="fas fa-book"></i> O'rta</a>
-      <a href="#" class="length-btn" data-length="long"><i class="fas fa-scroll"></i> Uzun</a>
-      <a href="#" class="length-btn" data-length="cs"><i class="fas fa-code"></i> CS TIIAME</a>
-      <a href="#" class="sound-toggle active" id="soundToggle"><i class="fas fa-volume-up"></i></a>
+    <div class="header">
+      <h1>- O'zbekcha Tayping Qil Akasi..</h1>
+      <div class="controls">
+        <a href="#" class="length-btn" data-length="short"><i class="fas fa-clock"></i> Qisqa</a>
+        <a href="#" class="length-btn" data-length="medium"><i class="fas fa-book"></i> O'rta</a>
+        <a href="#" class="length-btn" data-length="long"><i class="fas fa-scroll"></i> Uzun</a>
+        <a href="#" class="font-btn" id="fontMinus"><i class="fas fa-minus"></i></a>
+        <span id="fontSizeDisplay">26</span>
+        <a href="#" class="font-btn" id="fontPlus"><i class="fas fa-plus"></i></a>
+      </div>
     </div>
-    <div id="timer">00:00</div>
-    <div class="quote" id="quote"></div>
-    <div id="stats"></div>
-    <div id="restartLink"><i class="fas fa-redo"></i> Qayta boshlash</div>
-
-    <audio id="c1" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
-    <audio id="c2" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
-    <audio id="c3" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/c.wav" preload="auto"></audio>
-    <audio id="i1" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
-    <audio id="i2" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
-    <audio id="i3" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/i.wav" preload="auto"></audio>
-    <audio id="complete" src="https://cdn.jsdelivr.net/gh/uzbektyping/assets/s.wav" preload="auto"></audio>
+    <div class="main-content">
+      <div id="timer">00:00</div>
+      <div class="quote" id="quote"></div>
+      <div id="stats"></div>
+      <div id="restartLink"><i class="fas fa-redo"></i> Qayta boshlash</div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <script>
     const q=document.getElementById('quote'),s=document.getElementById('stats'),r=document.getElementById('restartLink'),
-          lengthBtns=document.querySelectorAll('.length-btn'),t=document.getElementById('soundToggle'),
+          lengthBtns=document.querySelectorAll('.length-btn'),
           ti=document.getElementById('timer'),h=document.querySelector('h1'),c=document.querySelector('.controls'),
-          th=document.querySelectorAll('.theme-btn');
+          th=document.querySelectorAll('.theme-btn'),
+          fontPlus = document.getElementById('fontPlus'),
+          fontMinus = document.getElementById('fontMinus'),
+          fontSizeDisplay = document.getElementById('fontSizeDisplay');
 
-    const cs=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')];
-    const ic=[document.getElementById('i1'),document.getElementById('i2'),document.getElementById('i3')];
-    const fin=document.getElementById('complete');
-
-    let ci=0,ii=0,quote='',spans=[],idx=0,start=false,time=null,int=null,end=false,
+    let quote='',spans=[],idx=0,start=false,time=null,int=null,end=false,
         len=localStorage.getItem('selectedLength')||'medium',
-        sound=localStorage.getItem('soundEnabled')!=='false',
         hist=[],cur=null,
-        theme=localStorage.getItem('theme')||'dark';
+        theme=localStorage.getItem('theme')||'dark',
+        currentFontSize = 1.6;
 
     document.body.dataset.theme=theme;
     th.forEach(b=>b.classList.toggle('active',b.dataset.theme===theme));
 
+    function updateFontSize(size) {
+      currentFontSize = Math.max(1.0, Math.min(3.0, size));
+      document.documentElement.style.setProperty('--font-size', `${currentFontSize}rem`);
+      fontSizeDisplay.textContent = Math.round(currentFontSize * 16);
+      localStorage.setItem('fontSize', currentFontSize.toString());
+      if (start && idx < spans.length) {
+        setTimeout(move, 0); // Re-position after resize
+      }
+    }
+
+    // Load saved font size
+    const savedFontSize = localStorage.getItem('fontSize');
+    if (savedFontSize) {
+      currentFontSize = parseFloat(savedFontSize);
+      updateFontSize(currentFontSize);
+    }
+
     const quotes={short:["Kelajakni bashorat qilishning eng yaxshi yo'li bu uni qurish.","Men yomon odam bo'lsam keragu, buni o'zim bilmasam kerak.","Shamdek yosh to'k, ko'ngil uying charog'on bo'lsin.","Kishi jasur bo'la olishi mumkin bo'lgan yagona vaqt, bu u qo'rqqanida.","Inson tabassumi bilan tarbiyasini, nimaga kulgani bilan saviyasini namoyon qiladi.","Kecha bu o'tmish, erta bu jumboq, lekin bugun bu tuhfa.","Rim bir kunda qurilmagan.","Bilim Makkaga yetib borgan, lekin amal qilish \"astanovka\"da ham emas.","Muhimi shokolad emas. Siz uni baham ko'rgan odamlardir.","Qilishing kerak bo'lgan ishni qil va nima bo'sa bo'lsin.","Ikkita kitob o'qigandan bitta kitobni ikki marta o'qigan afzal."],
       medium:["Las Vegas kazinosida yutishning yagona yo'li bu kirganingizdan so'ng imkon qadar tez chiqib ketishdir.","Tanaga qilichdek muomala qilsang qilich bo'ladi. Qog'ozdek muomala qilsang qog'oz bo'ladi.","Kimdir \"qila olaman\", kimdir \"qila olmayman\" deydi. Odatda ularning ikkisi ham haq.","Jismoniy shug'ullanish nafaqat bizni sog'lom, kuchli, chidamli va ko'rkam qiladi, balki aqlan ham o'stiradi.","Odamlar suratini bezatsa, sen siyratingni beza. Odamlar boshqalar aybidan so'z ochsa, sen o'z qusuringni o'yla.","Ey, do'st! Men Majnun emasman, ammo chaqirsang cho'li biyobonga borishga ham tayyorman.","Mashrabo ko'p so'zlama, oqillara, bir so'z yetar! Kar quloq bo'lsa agar: ming so'zlagin bejo ketar!","O'ylaring so'zlaringga, so'zlaring fe'lingga, fe'ling taqdiringga nuqs etadi. Go'zal o'yla, go'zal yasha.","Agar nimadandir qo'rqsang, shu narsani har kuni bajar. Borgan sari qo'rquv umuman yo'q bo'lib ketadi.","Bilim ko'p narsani bilish. O'sha narsalarni eng yaxshi yo'lda ishlata olish esa donolikdir.","Chalg'imay ishlang, kitob o'qing, o'ylang, yuring, yozing - g'alaba aniq, sabr qila olsangiz bas."],
-      long:["Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.","Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar","Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.","Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.","Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.","Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."],
-      cs:["Mash'ali fikrat - sening, ham changali vahshat sening,\nG'ayratu g'aflat sening, javlon o'zing, uryon o'zing.\n\nQildingu oyda xirom, ham yerda qon to'kding harom,\nUshbu holingdan mudom xandon o'zing, giryon o'zing.\n\nMinding ilm narvoniga, chiqding funun osmoniga,\nBu jahon ayvoniga arkon o'zing, vayron o'zing.\n\nZarrani ijod etib, dahshat balo bunyod etib,\nOqibatni yod etib, hayron o'zing, hayron o'zing.\n\nBog'i arz obod erur sendin agar imdod erur,\nYo'qsa u barbod erur, to'fon o'zing, to'g'on o'zing.\n\nSen hilol, yulduz, salib, Tavrot, Zaburdin yuksalib,\nBoymisan yoki g'arib, komron o'zing, yakson o'zing.\n\nKim farangi, kim habash, irq, qon talash, iymon talash,\nShulmi insondek yashash, armon o'zing, afg'on o'zing.\n\nMamlakatga mamlakat, millatga millat bo'lsa qasd,\nQilg'uchi so'ng oqibat armon o'zing, afg'on o'zing.\n\nOnayizoring - zamin, tanho yo'gu boring - zamin,\nXasta bemoring - zamin, o'g'lon o'zing, darmon o'zing.\n\nBag'rida yotquchi - sen, ne'matlarin totquchi - sen,\nTig' bo'lib botquchi - sen, paykon o'zing, qalqon o'zing."]
-
+      long:["Bu katta va go'zal dunyo. Ko'pchiligimiz, uni hechqaysi bo'lagini umuman ko'rolmasdan, o'zimiz tug'ilgan bir burchakda yashab, o'tib ketamiz. Men ko'pchiligimiz dek bo'lishni istamayman.","Biz kelib ketuvchi to'garak jahon Na boshi ma'lum na so'ngi ayon Hech kimsa rostini aytib berolmas Biz qaydan keldigu ketarmiz qayon Keksa yosh hayotga har kimki yetar Hammasi izma-iz birma-bir o'tar Bu dunyo hech kimga qolmas abadiy Ketdilar, ketamiz, kelishar, ketar","Insonni otash emas, o'z g'aflati yoqar. Barchadagi kamchilikni ko'rar-u, ammo o'ziga ko'rdek boqar. Nimaga qanday boqsang, u ham senga shunday boqar.","Xato qilgan bo'lsang, tan ol. Adashayotgan bo'lsang, savol so'ra. Tiqilib qolgan bo'lsang, yordam so'ra. Xato qilgan bo'lsang, undan o'rgan. O'rgandingmi? O'rgat.","Xalq dengizdir, xalq to'lqindir, xalq kuchdir, Xalq isyondir, xalq olovdir, xalq o'chdir... Xalq qo'zg'alsa kuch yo'qdirkim, to'xtatsin, Quvvat yo'qkim, xalq istagin yo'q etsin.","Bir qo'lida Qur'onu bittasida jom, Bazida halolmiz, bazida harom, Feruza osmonli gumbaz ostida Na chin musulmonmiz, na kofir tamom."]
     };
 
     function rand(l){return quotes[l][Math.floor(Math.random()*quotes[l].length)]}
@@ -179,29 +195,52 @@
     function timer(){if(start)return;start=true;document.body.classList.add('typing');time=Date.now();int=setInterval(()=>{ti.innerText=fmt(Date.now()-time)},250)}
     function stop(){clearInterval(int);int=null}
     function fmt(ms){let sec=Math.floor(ms/1000),m=('0'+Math.floor(sec/60)).slice(-2),ss=('0'+sec%60).slice(-2);return m+':'+ss}
-    function correct(){if(!sound)return;let a=cs[ci];a.currentTime=0;a.play().catch(()=>{});ci=(ci+1)%3}
-    function wrong(){if(!sound)return;let a=ic[ii];a.currentTime=0;a.play().catch(()=>{});ii=(ii+1)%3}
-    function move(){let n=spans[idx];if(n)q.insertBefore(cur,n);else q.appendChild(cur);cur.scrollIntoView({block:'nearest'})}
+    function move(){let n=spans[idx];if(n)q.insertBefore(cur,n);else q.appendChild(cur);setTimeout(() => {cur.scrollIntoView({block:'nearest'})}, 0)}
     function extra(ch){let sp=document.createElement('span');sp.className='extra';sp.textContent=ch;q.insertBefore(sp,cur);hist.push({el:sp,type:'extra'})}
     function back(){if(!hist.length)return;let last=hist.pop();if(last.type==='extra')last.el.remove();else{last.el.classList.remove('correct','incorrect');if(idx>0)idx--;move()}}
-    function stats(){let cor=q.querySelectorAll('[data-original].correct').length,inc=q.querySelectorAll('[data-original].incorrect').length,ex=q.querySelectorAll('.extra').length,tot=cor+inc+ex,acc=tot?Math.round(cor/tot*100):100,ms=Date.now()-time,w=ms/60000?(cor/5)/(ms/60000):0;return{acc,w,ms}}
-    function done(){end=true;document.body.classList.remove('typing');stop();let{a:w,acc:a,ms:m}=stats();s.innerText=`Vaqt: ${fmt(m)} | WPM: ${Math.round(w)} | To'g'rilik: ${a}%`;if(sound)fin.play().catch(()=>{});h.classList.remove('fade');c.classList.remove('fade');if(a===100)party()}
+    function stats(){let cor=q.querySelectorAll('[data-original].correct').length,inc=q.querySelectorAll('[data-original].incorrect').length,ex=q.querySelectorAll('.extra').length,tot=cor+inc+ex,acc=tot?Math.round(cor/tot*100):100,ms=time?Date.now()-time:0,w=ms>0?(cor/5)/(ms/60000):0;return{acc,w,ms}}
+    function done(){end=true;document.body.classList.remove('typing');stop();let{acc:a,w:w,ms:m}=stats();s.innerText=`Vaqt: ${fmt(m)} | WPM: ${Math.round(w)} | To'g'rilik: ${a}%`;h.classList.remove('fade');c.classList.remove('fade');if(a===100)party()}
     function party(){let cel=document.getElementById('celebration');cel.style.opacity=1;confetti({particleCount:400,spread:100,origin:{y:0.6}});setTimeout(()=>confetti({particleCount:200,angle:60,origin:{x:0}}),300);setTimeout(()=>confetti({particleCount:200,angle:120,origin:{x:1}}),600);setTimeout(()=>cel.style.opacity=0,6000)}
 
     document.addEventListener('keydown',e=>{
       if(end||e.ctrlKey||e.altKey||e.metaKey||['CapsLock','Shift','Tab','Escape'].includes(e.key))return;
-      if(!start)timer();
       if(e.key==='Backspace'){back();return}
-      let ch=e.key==='Enter'?'\n':e.key;
-      if(idx>=spans.length){if(ch.length===1||ch==='\n'){extra(ch==='\n'?'_':ch);wrong()}return}
+      if(e.key==='Enter'){
+        if(idx >= spans.length) return;
+        const expected = spans[idx].textContent;
+        if(expected === '\n'){
+          // Match explicit newline
+          spans[idx].classList.add('correct');
+          hist.push({el:spans[idx],type:'original'});
+          idx++;
+          setTimeout(move, 0);
+          if(idx>=spans.length) done();
+          return;
+        } else if(idx < spans.length){
+          // Check visual wrap: if next char on new line, advance
+          const curRect = cur.getBoundingClientRect();
+          const nextRect = spans[idx].getBoundingClientRect();
+          if(curRect.top < nextRect.top - 1){ // Small tolerance for floating point
+            // Visual end of line, advance without penalty
+            idx++;
+            setTimeout(move, 0);
+            return;
+          }
+        }
+        return; // Ignore otherwise
+      }
+      if(!start)timer();
+      let ch = e.key;
+      if(idx>=spans.length){if(ch.length===1){extra(ch)}return}
       let exp=spans[idx].textContent;
-      if(ch===exp){spans[idx].classList.add('correct');hist.push({el:spans[idx],type:'original'});idx++;move();correct();if(idx>=spans.length)done()}
-      else{if(ch.length===1||ch==='\n'){extra(ch==='\n'?'_':ch);wrong()}}
+      if(ch===exp){spans[idx].classList.add('correct');hist.push({el:spans[idx],type:'original'});idx++;move();if(idx>=spans.length)done()}
+      else{if(ch.length===1){extra(ch)}}
     });
 
     r.onclick=()=>begin();
     lengthBtns.forEach(b=>b.onclick=e=>{e.preventDefault();begin(b.dataset.length)});
-    t.onclick=e=>{e.preventDefault();sound=!sound;localStorage.setItem('soundEnabled',sound);t.classList.toggle('active',sound);t.innerHTML=`<i class="fas ${sound?'fa-volume-up':'fa-volume-mute'}"></i>`;};
+    fontPlus.onclick = e => { e.preventDefault(); updateFontSize(currentFontSize + 0.1); };
+    fontMinus.onclick = e => { e.preventDefault(); updateFontSize(currentFontSize - 0.1); };
     th.forEach(b=>b.onclick=e=>{
       e.preventDefault();
       theme=b.dataset.theme;
